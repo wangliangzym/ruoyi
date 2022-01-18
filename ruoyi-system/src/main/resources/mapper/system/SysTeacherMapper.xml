@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysTeacherMapper">
+    
+    <resultMap type="SysTeacher" id="SysTeacherResult">
+        <result property="id"    column="id"    />
+        <result property="teacherName"    column="teacher_name"    />
+        <result property="teacherSex"    column="teacher_sex"    />
+        <result property="photo"    column="photo"    />
+    </resultMap>
+
+    <sql id="selectSysTeacherVo">
+        select id, teacher_name, teacher_sex, photo from sys_teacher
+    </sql>
+
+    <select id="selectSysTeacherList" parameterType="SysTeacher" resultMap="SysTeacherResult">
+        <include refid="selectSysTeacherVo"/>
+        <where>  
+            <if test="teacherName != null  and teacherName != ''"> and teacher_name like concat('%', #{teacherName}, '%')</if>
+            <if test="teacherSex != null  and teacherSex != ''"> and teacher_sex = #{teacherSex}</if>
+            <if test="photo != null  and photo != ''"> and photo = #{photo}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysTeacherById" parameterType="Long" resultMap="SysTeacherResult">
+        <include refid="selectSysTeacherVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSysTeacher" parameterType="SysTeacher" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_teacher
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="teacherName != null">teacher_name,</if>
+            <if test="teacherSex != null">teacher_sex,</if>
+            <if test="photo != null">photo,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="teacherName != null">#{teacherName},</if>
+            <if test="teacherSex != null">#{teacherSex},</if>
+            <if test="photo != null">#{photo},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysTeacher" parameterType="SysTeacher">
+        update sys_teacher
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="teacherName != null">teacher_name = #{teacherName},</if>
+            <if test="teacherSex != null">teacher_sex = #{teacherSex},</if>
+            <if test="photo != null">photo = #{photo},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysTeacherById" parameterType="Long">
+        delete from sys_teacher where id = #{id}
+    </delete>
+
+    <delete id="deleteSysTeacherByIds" parameterType="String">
+        delete from sys_teacher where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
